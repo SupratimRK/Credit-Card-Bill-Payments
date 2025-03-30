@@ -42,14 +42,15 @@ const PaymentForm: React.FC = () => {
   const cardInputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null, null]);
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  // Helper function to generate the UPI URL based on form data
+  // Helper function to generate the UPI URL based on form data.
+  // The amount parameter is only included if the trimmed amount is non-empty and greater than zero.
   const getUpiUrl = (formData: FormData, selectedBank: any) => {
-    const amountParam = formData.amount ? `&am=${formData.amount}` : '';
+    const trimmedAmount = formData.amount.trim();
+    const amountParam = trimmedAmount !== '' && Number(trimmedAmount) > 0 ? `&am=${trimmedAmount}` : '';
     return `upi://pay?pa=${generateUpiId(formData, selectedBank)}&pn=${selectedBank.name}${amountParam}&cu=INR`;
   };
 
   const handleMobileNumberChange = (index: number, value: string) => {
-    // Removing non-digit characters and taking only 2 characters
     const newValue = value.replace(/\D/g, '').slice(0, 2);
     let updatedMobileNumber = formData.mobileNumber.split('');
     updatedMobileNumber[index * 2] = newValue[0] || '';
@@ -190,7 +191,6 @@ const PaymentForm: React.FC = () => {
   };
 
   const selectedBank = BANKS.find(bank => bank.id === formData.bank);
-  const upiId = selectedBank ? generateUpiId(formData, selectedBank) : '';
   const isCardComplete = formData.cardNumber.length === 16;
   const isMobileComplete = formData.mobileNumber.length === 10;
   const isFormValid = isCardComplete && isMobileComplete && !cardError && cardInfo && formData.bank;
