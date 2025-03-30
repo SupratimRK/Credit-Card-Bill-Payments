@@ -1,6 +1,17 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CreditCard, Smartphone, IndianRupee, QrCode, AlertCircle, CheckCircle2, Smartphone as Smartphone2, CreditCard as CreditCardIcon, AlertTriangle, RefreshCw } from 'lucide-react';
+import { 
+  CreditCard, 
+  Smartphone, 
+  IndianRupee, 
+  QrCode, 
+  AlertCircle, 
+  CheckCircle2, 
+  Smartphone as Smartphone2, 
+  CreditCard as CreditCardIcon, 
+  AlertTriangle, 
+  RefreshCw 
+} from 'lucide-react';
 import QRCode from 'qrcode.react';
 import { BANKS, validateForm, generateUpiId, validateCard, findBankByIssuer, getCardSchemeIcon } from '../utils';
 import { FormData, ValidationErrors, CardValidationResponse, CardGroup } from '../types';
@@ -31,8 +42,14 @@ const PaymentForm: React.FC = () => {
   const cardInputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null, null]);
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+  // Helper function to generate the UPI URL based on form data
+  const getUpiUrl = (formData: FormData, selectedBank: any) => {
+    const amountParam = formData.amount ? `&am=${formData.amount}` : '';
+    return `upi://pay?pa=${generateUpiId(formData, selectedBank)}&pn=${selectedBank.name}${amountParam}&cu=INR`;
+  };
+
   const handleMobileNumberChange = (index: number, value: string) => {
-    // Since type="number" may allow non-string values, we convert to string and then filter digits
+    // Removing non-digit characters and taking only 2 characters
     const newValue = value.replace(/\D/g, '').slice(0, 2);
     let updatedMobileNumber = formData.mobileNumber.split('');
     updatedMobileNumber[index * 2] = newValue[0] || '';
@@ -162,8 +179,7 @@ const PaymentForm: React.FC = () => {
     
     const selectedBank = BANKS.find(bank => bank.id === formData.bank);
     if (selectedBank) {
-      const upiId = generateUpiId(formData, selectedBank);
-      const upiUrl = `upi://pay?pa=${upiId}&pn=${selectedBank.name}&am=${formData.amount}&cu=INR`;
+      const upiUrl = getUpiUrl(formData, selectedBank);
       if (isMobile) {
         window.location.href = upiUrl;
       }
@@ -394,7 +410,7 @@ const PaymentForm: React.FC = () => {
                 </div>
                 <div className="flex justify-center bg-white p-4 rounded-lg shadow-inner">
                   <QRCode
-                    value={`upi://pay?pa=${upiId}&pn=${selectedBank?.name}&am=${formData.amount}&cu=INR`}
+                    value={selectedBank ? getUpiUrl(formData, selectedBank) : ''}
                     size={200}
                     level="H"
                     includeMargin={true}
@@ -410,7 +426,11 @@ const PaymentForm: React.FC = () => {
                 <div className="text-center text-sm text-gray-600">
                   <p>Scan with any UPI-enabled app</p>
                   <div className="flex justify-center space-x-2 mt-2">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/200px-UPI-Logo-vector.svg.png" alt="UPI" className="h-6" />
+                    <img 
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/200px-UPI-Logo-vector.svg.png" 
+                      alt="UPI" 
+                      className="h-6" 
+                    />
                   </div>
                 </div>
               </motion.div>
