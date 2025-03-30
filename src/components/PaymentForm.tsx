@@ -10,7 +10,7 @@ const PaymentForm: React.FC = () => {
     mobileNumber: '',
     cardNumber: '',
     bank: '',
-    amount: '',
+    amount: '', // amount field is optional
   };
 
   const [formData, setFormData] = useState<FormData>(initialFormState);
@@ -32,6 +32,7 @@ const PaymentForm: React.FC = () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   const handleMobileNumberChange = (index: number, value: string) => {
+    // Since type="number" may allow non-string values, we convert to string and then filter digits
     const newValue = value.replace(/\D/g, '').slice(0, 2);
     let updatedMobileNumber = formData.mobileNumber.split('');
     updatedMobileNumber[index * 2] = newValue[0] || '';
@@ -208,7 +209,7 @@ const PaymentForm: React.FC = () => {
                   <input
                     key={i}
                     ref={el => mobileInputRefs.current[i] = el}
-                    type="text"
+                    type="number"
                     maxLength={2}
                     value={formData.mobileNumber.slice(i * 2, (i * 2) + 2)}
                     onChange={(e) => handleMobileNumberChange(i, e.target.value)}
@@ -234,7 +235,7 @@ const PaymentForm: React.FC = () => {
                   <input
                     key={index}
                     ref={el => cardInputRefs.current[index] = el}
-                    type="text"
+                    type="number"
                     maxLength={4}
                     value={group.value}
                     onChange={(e) => handleCardGroupChange(index, e.target.value)}
