@@ -1,17 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  CreditCard, 
-  Smartphone, 
-  IndianRupee, 
-  QrCode, 
-  AlertCircle, 
-  CheckCircle2, 
-  Smartphone as Smartphone2, 
-  CreditCard as CreditCardIcon, 
-  AlertTriangle, 
-  RefreshCw 
-} from 'lucide-react';
+import { CreditCard, Smartphone, IndianRupee, QrCode, AlertCircle, CheckCircle2, Smartphone as Smartphone2, CreditCard as CreditCardIcon, AlertTriangle, RefreshCw } from 'lucide-react';
 import QRCode from 'qrcode.react';
 import { BANKS, validateForm, generateUpiId, validateCard, findBankByIssuer, getCardSchemeIcon } from '../utils';
 import { FormData, ValidationErrors, CardValidationResponse, CardGroup } from '../types';
@@ -42,15 +31,8 @@ const PaymentForm: React.FC = () => {
   const cardInputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null, null]);
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  // Helper function to generate the UPI URL based on form data.
-  // The amount parameter is only included if the trimmed amount is non-empty and greater than zero.
-  const getUpiUrl = (formData: FormData, selectedBank: any) => {
-    const trimmedAmount = formData.amount.trim();
-    const amountParam = trimmedAmount !== '' && Number(trimmedAmount) > 0 ? `&am=${trimmedAmount}` : '';
-    return `upi://pay?pa=${generateUpiId(formData, selectedBank)}&pn=${selectedBank.name}${amountParam}&cu=INR`;
-  };
-
   const handleMobileNumberChange = (index: number, value: string) => {
+    // Since type="number" may allow non-string values, we convert to string and then filter digits
     const newValue = value.replace(/\D/g, '').slice(0, 2);
     let updatedMobileNumber = formData.mobileNumber.split('');
     updatedMobileNumber[index * 2] = newValue[0] || '';
@@ -180,7 +162,8 @@ const PaymentForm: React.FC = () => {
     
     const selectedBank = BANKS.find(bank => bank.id === formData.bank);
     if (selectedBank) {
-      const upiUrl = getUpiUrl(formData, selectedBank);
+      const upiId = generateUpiId(formData, selectedBank);
+      const upiUrl = `upi://pay?pa=${upiId}&pn=${selectedBank.name}&am=${formData.amount}&cu=INR`;
       if (isMobile) {
         window.location.href = upiUrl;
       }
@@ -191,6 +174,7 @@ const PaymentForm: React.FC = () => {
   };
 
   const selectedBank = BANKS.find(bank => bank.id === formData.bank);
+  const upiId = selectedBank ? generateUpiId(formData, selectedBank) : '';
   const isCardComplete = formData.cardNumber.length === 16;
   const isMobileComplete = formData.mobileNumber.length === 10;
   const isFormValid = isCardComplete && isMobileComplete && !cardError && cardInfo && formData.bank;
@@ -231,7 +215,7 @@ const PaymentForm: React.FC = () => {
                     onChange={(e) => handleMobileNumberChange(i, e.target.value)}
                     onFocus={() => handleMobileGroupFocus(i)}
                     onBlur={() => handleMobileGroupBlur(i)}
-                    className="h-12 w-full text-center text-lg font-medium rounded-lg border border-gray-300 focus:outline-none transition-all duration-200"
+                    className="h-12 w-full text-center text-lg font-medium text-gray-700 rounded-lg border border-gray-300 focus:outline-none transition-all duration-200"
                     placeholder="••"
                   />
                 ))}
@@ -256,7 +240,7 @@ const PaymentForm: React.FC = () => {
                     value={group.value}
                     onChange={(e) => handleCardGroupChange(index, e.target.value)}
                     onFocus={() => handleCardGroupFocus(index)}
-                    className={`h-12 w-full px-3 py-2 text-center text-lg font-medium rounded-lg border ${
+                    className={`h-12 w-full px-3 py-2 text-center text-lg font-medium text-gray-700 rounded-lg border ${
                       group.focused ? 'border-blue-500 ring-2 ring-blue-200' :
                       errors.cardNumber ? 'border-red-500' : 'border-gray-300'
                     } focus:outline-none transition-all duration-200`}
@@ -280,7 +264,7 @@ const PaymentForm: React.FC = () => {
                             <img 
                               src={getCardSchemeIcon(cardInfo.Scheme)} 
                               alt={cardInfo.Scheme}
-                              className="h-6"
+                              className="h-4"
                             />
                           )}
                         </div>
@@ -339,7 +323,7 @@ const PaymentForm: React.FC = () => {
                 >
                   <div className="flex items-center text-yellow-800">
                     <AlertTriangle className="h-5 w-5 mr-2" />
-                    <p className="text-sm">Your card issuer isn't in our list. Please select your bank manually.</p>
+                    <p className="text-sm">We are unable to automatically detect your issuer. Kindly select your bank manually.</p>
                   </div>
                 </motion.div>
               )}
@@ -381,14 +365,14 @@ const PaymentForm: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <IndianRupee className="inline-block mr-2 h-4 w-4" />
-                Amount (Optional)
+                Amount in INR
               </label>
               <input
                 type="number"
                 name="amount"
                 value={formData.amount}
                 onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
-                className="h-12 w-full px-4 text-lg font-medium rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                className="h-12 w-full px-4 text-lg font-medium text-gray-700 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                 placeholder="Enter amount"
                 min="1"
                 step="0.01"
@@ -410,7 +394,7 @@ const PaymentForm: React.FC = () => {
                 </div>
                 <div className="flex justify-center bg-white p-4 rounded-lg shadow-inner">
                   <QRCode
-                    value={selectedBank ? getUpiUrl(formData, selectedBank) : ''}
+                    value={`upi://pay?pa=${upiId}&pn=${selectedBank?.name}&am=${formData.amount}&cu=INR`}
                     size={200}
                     level="H"
                     includeMargin={true}
@@ -426,11 +410,7 @@ const PaymentForm: React.FC = () => {
                 <div className="text-center text-sm text-gray-600">
                   <p>Scan with any UPI-enabled app</p>
                   <div className="flex justify-center space-x-2 mt-2">
-                    <img 
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/200px-UPI-Logo-vector.svg.png" 
-                      alt="UPI" 
-                      className="h-6" 
-                    />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/200px-UPI-Logo-vector.svg.png" alt="UPI" className="h-6" />
                   </div>
                 </div>
               </motion.div>
