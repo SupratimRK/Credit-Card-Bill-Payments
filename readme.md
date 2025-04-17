@@ -143,6 +143,6 @@ Crafted with 💜 by **Supratim**
 
 ## 🔗 Live App & Credits
 
-- 🚀 **Live Access:** [UPI Credit Card Bill Payment Tool](https://github.com/RedeemApp/cc-billpay-upi-id)  
+- 🚀 **Live Access:** [UPI Credit Card Bill Payment Tool](https://cc-bill.netlify.app)  
 - 🙌 **Credit:** Forked and adapted from [RedeemApp/cc-billpay-upi-id](https://github.com/RedeemApp/cc-billpay-upi-id)  
 - 🤝 **Contributors are most welcome!** Feel free to fork, improve, and raise a PR. Whether it's bug fixes, features, or just some code cleanup — all contributions are appreciated!
