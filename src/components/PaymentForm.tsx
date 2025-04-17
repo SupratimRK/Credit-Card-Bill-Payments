@@ -32,7 +32,6 @@ const PaymentForm: React.FC = () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   const handleMobileNumberChange = (index: number, value: string) => {
-    // Since type="number" may allow non-string values, we convert to string and then filter digits
     const newValue = value.replace(/\D/g, '').slice(0, 2);
     let updatedMobileNumber = formData.mobileNumber.split('');
     updatedMobileNumber[index * 2] = newValue[0] || '';
