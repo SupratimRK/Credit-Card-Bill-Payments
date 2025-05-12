@@ -33,5 +33,18 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
     "vite": "^5.4.2"
-  }
+  },
+  "description": "[![React](https://img.shields.io/badge/React-18+-blue?logo=react&logoColor=61DAFB)](https://reactjs.org/) [![TypeScript](https://img.shields.io/badge/TypeScript-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/) [![Framer Motion](https://img.shields.io/badge/Framer_Motion-purple?logo=framer&logoColor=white)](https://www.framer.com/motion/)",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SupratimRK/Credit-Card-Bill-Payments.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SupratimRK/Credit-Card-Bill-Payments/issues"
+  },
+  "homepage": "https://github.com/SupratimRK/Credit-Card-Bill-Payments#readme"
 }
