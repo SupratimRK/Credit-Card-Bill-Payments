@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CreditCard, Smartphone, IndianRupee, QrCode, AlertCircle, CheckCircle2, Smartphone as Smartphone2, CreditCard as CreditCardIcon, AlertTriangle, RefreshCw, Building2 } from 'lucide-react';
+import { CreditCard, Smartphone, IndianRupee, QrCode, AlertCircle, Smartphone as Smartphone2, RefreshCw, Building2 } from 'lucide-react';
 import QRCode from 'qrcode.react';
 import { BANKS, validateForm, generateUpiId, validateCard, findBankByIssuer, getCardSchemeIcon } from '../utils';
 import { FormData, ValidationErrors, CardValidationResponse, CardGroup } from '../types';
